@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:component-scan base-package="com.atguigu.ssm">
+<!--        开启组件扫描（除控制层）-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:exclude-filter>
+    </context:component-scan>
+<!--    配置数据源-->
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="driverClassName" value="${jdbc.driver}" />
+    </bean>
+
+<!--    配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+<!--        注入事件源-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--    开启事务的注解驱动
+    将@Transactional标识的方法或类中的所有方法进行事务管理-->
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+<!--    配置SqlSessionFactoryBean,可以直接在Spring的IOC中获取SqlSessionFactory-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+<!--        设置mybatis核心配置文件的路径-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+        <!--设置数据源-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+<!--    配置mapper接口的扫描，可以将指定包下的所有的mapper接口，通过与上面的一个配置SqlSessionFactoryBean标签得到的SqlSessionFactory对象，
+由SqlSessionFactory对象得到SqlSession,通过SqlSession创建代理实现类对象（以前在mybatis是通过 EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class)获得），并将这些对象交给IOC容器管理-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.atguigu.ssm.mapper"></property>
+    </bean>
+</beans>

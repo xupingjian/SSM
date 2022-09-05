@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/employee}" method="post">
+    <input type="hidden" name="_method" value="put">
+    员工ID:<input type="text" name="empId" th:value="${employee.empId}"><br>
+    员工姓名：<input type="text" name="empName" th:value="${employee.empName}"><br>
+    年龄：<input type="text" name="age" th:value="${employee.age}"><br>
+    性别:<input type="text" name="gender" th:value="${employee.gender}"><br>
+    邮箱:<input type="text" name="email" th:value="${employee.email}"><br>
+    <input type="submit" name="修改">
+</form>
+</body>
+</html>
